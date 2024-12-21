@@ -3,9 +3,24 @@ const node_canvas = require("canvas");
 const { readFileSync, writeFileSync } = require("fs");
 const threads     = require("worker_threads");
 const path = require("path");
+const WAN_IF = "wan";
+const LAN_IF = "lan";
+
+function isLANconfigured() {
+	try {
+		const alias = readFileSync("/sys/class/net/" + LAN_IF + "/ifalias", "utf-8").trim();
+		if(alias.includes("CONFIGURED")) {
+			return true;
+		}
+	} catch {
+		return false;
+	}
+	return false;
+}
 
 function lcd_redraw(imageData) {
 	const pixelData = new Uint16Array(imageData.data);
+	pixelData.reverse();
 
 	lcdThread.postMessage({ type: "redraw", pixelData}, [pixelData.buffer]);
 }
@@ -184,6 +199,7 @@ function network(interface) {
 const SUCCESS = "#0ab507";
 const WARNING = "#dba61c";
 const ERROR = "#dc1b1c";
+const GRAY = "#acacac";
 
 async function drawNetworkStats(ctx) {
 	ctx.fillStyle = SUCCESS;
@@ -216,7 +232,7 @@ async function drawNetworkStats(ctx) {
 		height / 2 + 60
 	);
 
-	ctx.fillStyle = (isInterfaceUp("eth0") && isInterfaceUp("eth1")) ? SUCCESS : ERROR;
+	ctx.fillStyle = (isInterfaceUp(WAN_IF) && isInterfaceUp(LAN_IF)) ? SUCCESS : ERROR;
 	ctx.fillRect(width / 2, 0, width / 2, height);
 	ctx.fillStyle = "white";
 	// Center the image on the half of the screen
@@ -226,8 +242,8 @@ async function drawNetworkStats(ctx) {
 	);
 	ctx.fillStyle = "white";
 	ctx.font = "16px Roboto";
-	const wan = network("eth0");
-	const lan = network("eth1");
+	const wan = network(WAN_IF);
+	const lan = network(LAN_IF);
 
 	text = wan.up ? `WAN: ${wan.rx}/${wan.tx} ${wan.unit}` : "WAN: Nicht verbunden!";
 	textWidth = ctx.measureText(text).width;
@@ -291,7 +307,22 @@ function render(ctx) {
 	// render(ctx);
 
 	setInterval(async () => {
-		await drawNetworkStats(ctx);
+		if(isLANconfigured()) {
+			await drawNetworkStats(ctx);
+		} else {
+			ctx.fillStyle = GRAY;
+			ctx.fillRect(0, 0, width, height);
+			ctx.fillStyle = "white";
+			const shield = await node_canvas.loadImage("icon/shield_success.png");
+			const iconWidth = 512;
+			const iconHeight = 512;
+			ctx.drawImage(shield, 50, 50);
+			ctx.fillStyle = "white";
+			ctx.font = "16px Roboto";
+			let text = "Deaktiviert.";
+			let textWidth = ctx.measureText(text).width;
+			ctx.fillText(text, (width / 2 - textWidth) / 2, height / 2 + 40);
+		}
 		render(ctx);
 	}, 5000);
 })()
