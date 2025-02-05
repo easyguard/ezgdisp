@@ -10,7 +10,7 @@ const { readFileSync, writeFileSync } = require("fs");
 
 function loadConfig() {
 	try {
-		return [...defaultConfig, ...JSON.parse(readFileSync(CONFIG_PATH, "utf-8"))];
+		return {...defaultConfig, ...JSON.parse(readFileSync(CONFIG_PATH, "utf-8"))};
 	} catch {
 		writeFileSync(CONFIG_PATH, JSON.stringify(defaultConfig, null, 4));
 		return defaultConfig;
