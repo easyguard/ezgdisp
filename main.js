@@ -1,10 +1,12 @@
-const DEVICE = "1-8:1.1";
 const node_canvas = require("canvas");
 const { readFileSync, writeFileSync } = require("fs");
 const threads     = require("worker_threads");
 const path = require("path");
-const WAN_IF = "wan";
-const LAN_IF = "lan";
+const loadConfig = require("./config");
+const config = loadConfig();
+const DEVICE = config.device;
+const WAN_IF = config.wan;
+const LAN_IF = config.lan;
 
 function isLANconfigured() {
 	try {
@@ -20,7 +22,7 @@ function isLANconfigured() {
 
 function lcd_redraw(imageData) {
 	const pixelData = new Uint16Array(imageData.data);
-	pixelData.reverse();
+	if(config.flip_screen) pixelData.reverse();
 
 	lcdThread.postMessage({ type: "redraw", pixelData}, [pixelData.buffer]);
 }
