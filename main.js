@@ -1,5 +1,5 @@
 const node_canvas = require("canvas");
-const { readFileSync, writeFileSync } = require("fs");
+const { readFileSync, writeFileSync, existsSync } = require("fs");
 const threads     = require("worker_threads");
 const path = require("path");
 const loadConfig = require("./config");
@@ -204,7 +204,8 @@ const ERROR = "#dc1b1c";
 const GRAY = "#acacac";
 
 async function drawNetworkStats(ctx) {
-	ctx.fillStyle = SUCCESS;
+	const checkengine = existsSync("/tmp/check_engine");
+	ctx.fillStyle = checkengine ? ERROR : SUCCESS;
 	ctx.fillRect(0, 0, width / 2, height);
 	ctx.fillStyle = "white";
 	const shield = await node_canvas.loadImage("icon/shield_success.png");
@@ -219,14 +220,14 @@ async function drawNetworkStats(ctx) {
 	ctx.fillStyle = "white";
 	ctx.font = "16px Roboto";
 	// Center the text on the half of the screen
-	let text = "Durch EasyGuard";
+	let text = checkengine ? "Problem" : "Durch EasyGuard";
 	let textWidth = ctx.measureText(text).width;
 	ctx.fillText(
 		text,
 		(width / 2 - textWidth) / 2,
 		height / 2 + 40
 	);
-	text = "abgesichert.";
+	text = checkengine ? "erkannt." : "abgesichert.";
 	textWidth = ctx.measureText(text).width;
 	ctx.fillText(
 		text,
