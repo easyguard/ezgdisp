@@ -206,7 +206,7 @@ async function drawNetworkStats(ctx) {
 	const checkengine = existsSync("/tmp/check_engine");
 	ctx.fillStyle = checkengine ? ERROR : SUCCESS;
 	ctx.fillRect(0, 0, width / 2, height);
-	ctx.fillStyle = "white";
+	ctx.fillStyle = "black";
 	const shield = await node_canvas.loadImage("icon/shield_success.png");
 	const globe = await node_canvas.loadImage("icon/globe.png");
 	const iconWidth = 512;
@@ -216,7 +216,7 @@ async function drawNetworkStats(ctx) {
 		shield,
 		50, 50
 	);
-	ctx.fillStyle = "white";
+	ctx.fillStyle = "black";
 	ctx.font = "16px Roboto";
 	// Center the text on the half of the screen
 	let text = checkengine ? "Problem" : "Durch EasyGuard";
@@ -236,13 +236,13 @@ async function drawNetworkStats(ctx) {
 
 	ctx.fillStyle = (isInterfaceUp(WAN_IF) && isInterfaceUp(LAN_IF)) ? SUCCESS : ERROR;
 	ctx.fillRect(width / 2, 0, width / 2, height);
-	ctx.fillStyle = "white";
+	ctx.fillStyle = "black";
 	// Center the image on the half of the screen
 	ctx.drawImage(
 		globe,
 		width / 2 + 50, 50
 	);
-	ctx.fillStyle = "white";
+	ctx.fillStyle = "black";
 	ctx.font = "16px Roboto";
 	const wan = network(WAN_IF);
 	const lan = network(LAN_IF);
