@@ -314,12 +314,12 @@ function render(ctx) {
 		} else {
 			ctx.fillStyle = GRAY;
 			ctx.fillRect(0, 0, width, height);
-			ctx.fillStyle = "white";
+			ctx.fillStyle = "black";
 			const shield = await node_canvas.loadImage("icon/shield_success.png");
 			const iconWidth = 512;
 			const iconHeight = 512;
 			ctx.drawImage(shield, 50, 50);
-			ctx.fillStyle = "white";
+			ctx.fillStyle = "black";
 			ctx.font = "16px Roboto";
 			let text = "Deaktiviert.";
 			let textWidth = ctx.measureText(text).width;
