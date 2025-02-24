@@ -207,7 +207,7 @@ async function drawNetworkStats(ctx) {
 	ctx.fillStyle = checkengine ? ERROR : SUCCESS;
 	ctx.fillRect(0, 0, width / 2, height);
 	ctx.fillStyle = "black";
-	const shield = await node_canvas.loadImage("icon/shield_success.png");
+	const shield = await node_canvas.loadImage(checkengine ? "icon/shield_warning.png" : "icon/shield_success.png");
 	const globe = await node_canvas.loadImage("icon/globe.png");
 	const iconWidth = 512;
 	const iconHeight = 512;
